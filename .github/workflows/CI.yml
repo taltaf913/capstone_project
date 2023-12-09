@@ -6,6 +6,68 @@ on:
   workflow_dispatch:
 
 jobs:
+  train:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10.11'
+    - name: Install dependencies
+      run: pip install -r requirements/requirements.txt
+    - name: Train and save pipeline
+      run: python plant_leave_diseases_model/train_model.py
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-trained-pipeline
+        path: plant_leave_diseases_model/trained_models/*.keras
+test:
+  needs: train
+  runs-on: ubuntu-latest
+  strategy:
+    fail-fast: false
+  steps:
+  - uses: actions/checkout@v3
+  - name: Set up Python 3.10
+    uses: actions/setup-python@v3
+    with:
+      python-version: '3.10'
+  - uses: actions/download-artifact@v2
+    with:
+      name: my-trained-pipeline
+  - run: mv *.pkl plant_leave_diseases_mode/trained_models/
+  - name: Install dependencies
+    run: pip install -r requirements/test_requirements.txt
+  - name: Test with pytest
+    run: pytest
+
+build:
+  needs: [train, test]
+  runs-on: ubuntu-latest
+  strategy:
+    fail-fast: false
+  steps:
+  - uses: actions/checkout@v3
+  - name: Set up Python 3.10
+    uses: actions/setup-python@v3
+    with:
+      python-version: '3.10'
+  - uses: actions/download-artifact@v2
+    with:
+      name: my-trained-pipeline
+  - run: mv *.pkl plant_leave_diseases_mode/trained_models/
+  - name: Install dependencies
+    run: pip install --upgrade build
+  - name: Build package
+    run: python -m build
+  - uses: actions/upload-artifact@v2
+    with:
+      name: my-build-package
+      path: dist/*.whl
+
   push-image:
     runs-on: ubuntu-latest
     steps:
@@ -21,12 +83,12 @@ jobs:
     - name: Build the Docker image for Fastapi app
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
-      run: docker build . -f Dockerfile -t $DOCKER_USER/plant-fastapi-mini:latest
+      run: docker build . -f Dockerfile -t $DOCKER_USER/plant_leave_diseases_model:latest
 
     - name: Push the Docker Image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
-      run: docker push $DOCKER_USER/plant-fastapi-mini
+      run: docker push $DOCKER_USER/plant_leave_diseases_model
 
     - name: Logout to Docker hub
       run: docker logout
