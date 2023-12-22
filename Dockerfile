@@ -1,9 +1,7 @@
 FROM python:3.10
 
-ADD * /plant_api/
-
-WORKDIR /plant_api
-
+# copy application files
+ADD . .
 # update pip
 RUN pip install --upgrade pip
 
@@ -19,6 +17,8 @@ COPY --chown=myuser . .
 
 # expose port for application
 EXPOSE 8001
+EXPOSE 80
+EXPOSE 443
 
 # start fastapi application
-CMD ["python", "gradio_app.py"]
+CMD ["python", "app.py"]

@@ -1,2 +1,2 @@
-# capstone_project
-This is a repository for capstone project activities
+# iisc_capston_leaf_disease_identification
+capston project

@@ -1,5 +1,6 @@
 gradio
 joblib
+openai==0.28
 pandas
 numpy
 scikit-learn

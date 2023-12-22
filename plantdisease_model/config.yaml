@@ -1,0 +1,36 @@
+# Package Overview
+package_name: plantdisease_model
+
+# Data Files
+train_path: train
+validation_path: validation
+test_path: test
+
+
+model_name: plantdisease_model
+model_save_file: plantdisease_model_output_v
+
+# Feature engineering parameters
+image_size: 
+  - 180
+  - 180
+batch_size: 32
+scaling_factor: 255.0
+
+# Set the random seed
+random_state: 42
+
+# Alogrithm parameters
+input_shape: 
+  - 180
+  - 180
+  - 3
+epochs: 10
+optimizer: rmsprop
+loss: binary_crossentropy
+accuracy_metric: accuracy
+verbose: 1
+earlystop: 0
+monitor: val_loss
+save_best_only: True
+

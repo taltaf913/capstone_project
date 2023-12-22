@@ -1,0 +1,17 @@
+include *.txt
+include *.md
+include *.pkl
+recursive-include ./plant_leave_diseases_model *
+
+recursive-include plant_leave_diseases_model/datasets *
+recursive-include plant_leave_diseases_model/trained_models *
+include plant_leave_diseases_model/VERSION
+include plant_leave_diseases_model/config.yml
+
+include ./requirements/requirements.txt
+include ./requirements/test_requirements.txt
+exclude *.log
+exclude *.cfg
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
